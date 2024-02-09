@@ -1,3 +1,5 @@
+* Issue #1953: Fixed an issue causing a seg-fault with --genomeTransformType options.
+
 STAR 2.7.11b --- 2024/01/24 ::: Minor in one parameter.
 ===========================================
 * Replaced --quantTranscriptomeBan parameter with --quantTranscriptomeSAMoutput with more explicit naming of options. The default behavior is not affected.
