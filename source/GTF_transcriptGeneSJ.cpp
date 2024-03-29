@@ -83,8 +83,8 @@ uint64 GTF::transcriptGeneSJ(const string &dirOut)
 
         qsort((void*) extrLoci, exonN, sizeof(uint64)*GTF_extrLoci_size, funCompareArrays<uint64,5>);
 
-        ofstream trOut ((dirOut+"/transcriptInfo.tab").c_str());
-        trOut<<transcriptID.size() << "\n";
+        std::ostringstream trStream;
+
         ofstream exOut ((dirOut+"/exonInfo.tab").c_str());
         exOut<<exonN<<"\n";
 
@@ -93,10 +93,13 @@ uint64 GTF::transcriptGeneSJ(const string &dirOut)
         uint64 trstart=extrLoci[GTF_extrTrStart(0)];
         uint64 trend=extrLoci[GTF_extrTrEnd(0)];
         uint64 exlen=0;
+        uint64 ntr=0;
+
         for (uint64 iex=0;iex<=exonN; iex++) {
             if (iex==exonN || extrLoci[GTF_extrTrID(iex)] != trid) {//start of the new transcript
                 //write out previous transcript
-                trOut << transcriptID.at(trid) <<"\t"<< extrLoci[GTF_extrTrStart(iex-1)]<<"\t"<< extrLoci[GTF_extrTrEnd(iex-1)] \
+                ntr++; //Issue: #2058: count actual number of transcripts in case it is less than transcriptID.size(), which can happen for transformed genomes (deletions)
+                trStream << transcriptID.at(trid) <<"\t"<< extrLoci[GTF_extrTrStart(iex-1)]<<"\t"<< extrLoci[GTF_extrTrEnd(iex-1)] \
                        <<"\t"<< trend << "\t"<< (uint64) transcriptStrand[trid]  <<"\t"<< iex-trex <<"\t"<<trex<<"\t"<<extrLoci[GTF_extrGeID(iex-1)]<<"\n";
                 if (iex==exonN) break;
                 trid=extrLoci[GTF_extrTrID(iex)];
@@ -108,7 +111,11 @@ uint64 GTF::transcriptGeneSJ(const string &dirOut)
             exOut << extrLoci[GTF_extrExStart(iex)]-trstart <<"\t"<< extrLoci[GTF_extrExEnd(iex)]-trstart <<"\t"<< exlen <<"\n";
             exlen+=extrLoci[GTF_extrExEnd(iex)]-extrLoci[GTF_extrExStart(iex)]+1;
         };
+
+        ofstream trOut ((dirOut+"/transcriptInfo.tab").c_str());
+        trOut<< ntr << trStream.str();
         trOut.close();
+
         exOut.close();
     };
 

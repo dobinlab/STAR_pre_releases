@@ -1,3 +1,5 @@
+* Fixed a bug that in rare cases caused incorrect BAM output for unmapped mates with diploid genome.
+* Issue #2058: Fixed an issue casing an error for transformed genome with completely deleted transcripts
 * Issue #1953: Fixed an issue causing a seg-fault with --genomeTransformType options.
 
 STAR 2.7.11b --- 2024/01/24 ::: Minor in one parameter.

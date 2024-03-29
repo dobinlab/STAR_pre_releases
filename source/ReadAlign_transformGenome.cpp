@@ -18,8 +18,9 @@ void ReadAlign::transformGenome()
         
         *alignsGenOut.alMult[nTr1]=*trMult[iTr];//copy information before conversion
         if (trMult[iTr]->transformGenome(*mapGen.genomeOut.g, *alignsGenOut.alMult[nTr1])) {        
-            if (trBest == trMult[iTr])
-                alignsGenOut.alBest = alignsGenOut.alMult[nTr1]; //mark the best transcript
+            // This may not work if the trandformation is not possible for trBest
+            //if (trBest == trMult[iTr])
+            //    alignsGenOut.alBest = alignsGenOut.alMult[nTr1]; //mark the best transcript
             ++nTr1;
         };
     };
@@ -70,5 +71,10 @@ void ReadAlign::transformGenome()
     };
 
     funPrimaryAlignMark(alignsGenOut.alMult, alignsGenOut.alN, P, maxScore, rngUniformReal0to1, rngMultOrder);
-    
+    for (uint32 ia1=0; ia1<alignsGenOut.alN; ia1++) {
+        if (alignsGenOut.alMult[ia1]->primaryFlag) {
+            alignsGenOut.alBest = alignsGenOut.alMult[ia1];
+            break;
+        };
+    };
 };
